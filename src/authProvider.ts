@@ -16,6 +16,9 @@ const mockUsers = [
 
 //@here I mainly don't know how to change the auth provider because some things are being
 // set by the [...auth0].ts
+//
+// I tried to make the custom authProvider using the useUser() hook, but the problem arises in the
+// other `@here` comment
 export const authProvider: AuthProvider = {
   login: ({ email, username, password, remember }) => {
     // Suppose we actually send a request to the back end here.
