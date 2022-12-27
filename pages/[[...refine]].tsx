@@ -16,7 +16,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { resource, action, id } = handleRefineParams(context.params?.refine);
 
   const { isAuthenticated, ...props } = await checkAuthentication(
-    authProvider,
+    authProvider, //@here Auth provider needed here.
     context
   );
 

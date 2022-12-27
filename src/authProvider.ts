@@ -14,6 +14,8 @@ const mockUsers = [
   },
 ];
 
+//@here I mainly don't know how to change the auth provider because some things are being
+// set by the [...auth0].ts
 export const authProvider: AuthProvider = {
   login: ({ email, username, password, remember }) => {
     // Suppose we actually send a request to the back end here.
