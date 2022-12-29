@@ -15,17 +15,12 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { resource, action, id } = handleRefineParams(context.params?.refine);
 
-  const { isAuthenticated, ...props } = await checkAuthentication(
-    authProvider, //@here Auth provider needed here.
-    context
-  );
+  const { isAuthenticated, ...rest } = await checkAuthentication(authProvider, context)
 
-  const i18nProps = await serverSideTranslations(context.locale ?? "en", [
-    "common",
-  ]);
+  const i18nProps = await serverSideTranslations(context.locale ?? 'en', ['common'])
 
   if (!isAuthenticated) {
-    return { props: { ...props, ...i18nProps } };
+    return { ...rest, props: { ...('props' in rest ? rest.props : {}), ...i18nProps } }
   }
 
   try {
