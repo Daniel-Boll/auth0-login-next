@@ -1,68 +1,34 @@
-import { AuthProvider } from "@pankod/refine-core";
-import nookies from "nookies";
+import { AuthProvider } from '@pankod/refine-core'
+import nookies from 'nookies'
+import axios from 'axios'
 
-const mockUsers = [
-  {
-    username: "admin",
-    email: "admin@refine.dev",
-    roles: ["admin"],
-  },
-  {
-    username: "editor",
-    email: "editor@refine.dev",
-    roles: ["editor"],
-  },
-];
-
-//@here I mainly don't know how to change the auth provider because some things are being
-// set by the [...auth0].ts
-//
-// I tried to make the custom authProvider using the useUser() hook, but the problem arises in the
-// other `@here` comment
 export const authProvider: AuthProvider = {
-  login: ({ email, username, password, remember }) => {
-    // Suppose we actually send a request to the back end here.
-    const user = mockUsers[0];
-
-    if (user) {
-      nookies.set(null, "auth", JSON.stringify(user), {
-        maxAge: 30 * 24 * 60 * 60,
-        path: "/",
-      });
-      return Promise.resolve();
-    }
-
-    return Promise.reject();
+  login: () => {
+    return Promise.resolve()
   },
   logout: () => {
-    nookies.destroy(null, "auth");
-    return Promise.resolve();
+    return Promise.resolve('/api/auth/logout')
   },
   checkError: (error) => {
     if (error && error.statusCode === 401) {
-      return Promise.reject();
+      return Promise.reject()
     }
 
-    return Promise.resolve();
+    return Promise.resolve()
   },
-  checkAuth: (ctx) => {
-    const cookies = nookies.get(ctx);
-    return cookies["auth"] ? Promise.resolve() : Promise.reject();
-  },
-  getPermissions: () => {
-    const auth = nookies.get()["auth"];
-    if (auth) {
-      const parsedUser = JSON.parse(auth);
-      return Promise.resolve(parsedUser.roles);
+  checkAuth: async (params) => {
+    const cookies = nookies.get(params)
+
+    try {
+      const res = await axios.get(`http://localhost:3000/api/auth/me`, {
+        headers: {
+          cookie: `appSession=${cookies['appSession']}`,
+        },
+      })
+      return res.status === 200 ? Promise.resolve() : Promise.reject()
+    } catch (error) {
+      return Promise.reject()
     }
-    return Promise.reject();
   },
-  getUserIdentity: () => {
-    const auth = nookies.get()["auth"];
-    if (auth) {
-      const parsedUser = JSON.parse(auth);
-      return Promise.resolve(parsedUser.username);
-    }
-    return Promise.reject();
-  },
-};
+  getPermissions: () => Promise.resolve(),
+}

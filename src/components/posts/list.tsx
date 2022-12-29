@@ -12,8 +12,11 @@ import {
 } from "@pankod/refine-mui";
 
 import { ICategory, IPost } from "src/interfaces";
+import { useUser } from "@auth0/nextjs-auth0/client";
 
 export const PostList: React.FC = () => {
+  const { user } = useUser()
+  console.log({ user })
   const t = useTranslate();
 
   const { dataGridProps } = useDataGrid<IPost>();
